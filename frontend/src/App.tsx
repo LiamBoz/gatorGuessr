@@ -1,7 +1,7 @@
 import React from 'react';
 import { APIProvider, Map } from '@vis.gl/react-google-maps';
 
-const API_KEY = 'AIzaSyChOFDctKTEQCTumeImc5LHEUeJwok5yN8';
+const API_KEY = '';
 
 function App() {
   console.log('App component rendering');
