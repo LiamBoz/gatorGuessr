@@ -3,6 +3,8 @@ import { APIProvider, Map } from '@vis.gl/react-google-maps';
 
 const API_KEY = '';
 
+AIzaSyAks9xTwCIXmPpt-pgQtaUCzQxNBEmYwbQ
+
 function App() {
   console.log('App component rendering');
   console.log('API Key:', API_KEY);
