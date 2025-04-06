@@ -54,6 +54,46 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 5px #000;
+}
+
+.photo-container {
+  width: 60%;
+  height: 300px;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.photo-placeholder {
+  color: #bbb;
+  font-size: 1.2rem;
+}
+
+.map-wrapper {
+  width: 40%;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
