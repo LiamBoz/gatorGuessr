@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS images (
+  id SERIAL PRIMARY KEY,
+  title TEXT,
+  url TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS entries (
+  id SERIAL PRIMARY KEY,
+  image_id INTEGER REFERENCES images(id),
+  latitude DOUBLE PRECISION NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL,
+  likes INTEGER DEFAULT 0,
+  dislikes INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
