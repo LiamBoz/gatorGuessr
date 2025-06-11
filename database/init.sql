@@ -15,3 +15,4 @@ CREATE TABLE IF NOT EXISTS entries (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+todo: think about more, refine, create basic data 
