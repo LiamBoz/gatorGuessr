@@ -5,10 +5,14 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
-class Image(Base):
+class ImageTable(Base):
     __tablename__ = "images"
 
     id: int = mapped_column(primary_key=True)
     title: str = column()
-class Entries(Base):
+
+class EntryTable(Base):
     __tablename__ = "entries"
+
+class GuessTable(Base):
+    __tablename__ = "guesses"
