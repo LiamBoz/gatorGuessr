@@ -22,7 +22,7 @@ services:
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/00-schema.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/00-test.sql
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
