@@ -5,8 +5,8 @@ Follow these steps to get the app up and running:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
+git clone {link}
+cd gatorGuessr
 ```
 
 ### Build the Docker Images
@@ -21,13 +21,14 @@ docker-compose build
 docker-compose up
 ```
 
+> **Note** You may need to use sudo if you run into issues with the docker commands.
 ---
 
 ##  Service Ports
 
 | Port | Service  | Description                              | Local URL                           |
 |------|----------|------------------------------------------|-------------------------------------|
-| 5173 | Frontend | SvelteKit development server             | [http://localhost:5173](http://localhost:5173) |
+| 5173 | Frontend | React Development server                 | [http://localhost:5173](http://localhost:5173) |
 | 8000 | Backend  | FastAPI server (Swagger: `/api/docs`)    | [http://localhost:8000/api/docs](http://localhost:8000/api/docs) |
 | 5050 | pgAdmin  | Access database GUI                      | [http://localhost:5050](http://localhost:5050) |
 
