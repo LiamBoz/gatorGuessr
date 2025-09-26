@@ -1,8 +1,7 @@
 import React from 'react';
 import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
 
-const API_KEY = '';
-
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 function App() {
   console.log('App component rendering');
@@ -25,7 +24,7 @@ function App() {
           <Map
             style={{ width: '100%', height: '100%', borderRadius: '12px' }}
             defaultZoom={15}
-            defaultCenter={{ lat: 29.6465, lng: 82.3533 }}
+            defaultCenter={{ lat: 29.6465, lng: -82.3533 }}
             gestureHandling={'greedy'}
             disableDefaultUI={true}
           >
