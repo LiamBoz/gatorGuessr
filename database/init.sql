@@ -1,11 +1,13 @@
-CREATE TABLE IF NOT EXISTS images (
+CREATE TABLE images (
   id SERIAL PRIMARY KEY,
   title TEXT,
   url TEXT NOT NULL,
+  latitude DOUBLE PRECISION NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS entries (
+CREATE TABLE entries (
   id SERIAL PRIMARY KEY,
   image_id INTEGER REFERENCES images(id),
   latitude DOUBLE PRECISION NOT NULL,
@@ -16,7 +18,7 @@ CREATE TABLE IF NOT EXISTS entries (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS guesses (
+CREATE TABLE guesses (
   id SERIAL PRIMARY KEY,
   entry_id INTEGER NOT NULL,
   guessed_longitude DOUBLE PRECISION NOT NULL,
@@ -26,11 +28,13 @@ CREATE TABLE IF NOT EXISTS guesses (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
-INSERT INTO images (title, url)
+INSERT INTO images (title, url, latitude, longitude)
 VALUES
   (
     'Marston',
-    'https://example.com/images/marston.jpg'
+    '/database/images/marston.jpg',
+    29.648912,
+    -82.345176
   );
 
 INSERT INTO entries (image_id, latitude, longitude, description)
