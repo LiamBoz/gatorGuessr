@@ -47,3 +47,122 @@
 .read-the-docs {
   color: #888;
 }
+
+/* button variants used by new Button component */
+.btn-primary {
+  background-color: #2563eb;
+  color: #fff;
+  border: 1px solid transparent;
+}
+.btn-primary:hover { opacity: 0.95; }
+
+.btn-ghost {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  color: #111;
+}
+
+:root {
+  --color-primary: #2563eb;
+}
+
+/* University of Florida brand-ish colors for the header */
+.uf-blue { color: #0021A5; }
+.uf-orange { color: #FA4616; margin-left: 4px; }
+
+/* Submit dropdown styles (fallback/extra rules) */
+.submit-drop { max-width: 20rem; }
+.drop-area { cursor: pointer; }
+
+.leaderboard-drop { max-width: 14rem; }
+
+.hero-card {
+  border-radius: 1rem;
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 40px rgba(16,24,40,0.08);
+}
+
+/* dark landing helpers */
+.overlay-translucent { background-color: rgba(255,255,255,0.8); backdrop-filter: blur(6px); }
+
+/* Map overlay hover-grow effect: scale up anchored to bottom-right */
+.map-overlay {
+  transform-origin: 100% 100%; /* bottom-right */
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms, opacity 180ms;
+  will-change: transform, opacity;
+  opacity: 0.85; /* slightly translucent by default */
+}
+.map-overlay:hover {
+  transform: scale(3); /* ~3x size */
+  z-index: 9999; /* place above other UI */
+  box-shadow: 0 30px 80px rgba(2,6,23,0.6);
+  opacity: 1; /* fully opaque on hover */
+}
+
+/* When the map overlay is hovered, expand the Guess button's width to match
+   the visual width of the scaled map by scaling only the X axis. This keeps
+   the button's height constant. The button is the immediate sibling below
+   the map overlay in the landing markup, so use the adjacent-sibling selector. */
+.map-overlay + button {
+  transform-origin: 100% 100%; /* anchor to bottom-right */
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms;
+  will-change: transform;
+}
+.map-overlay:hover + button {
+  transform: scaleX(3); /* widen to match map visual width without changing height */
+}
+
+/* New guess box styles: place a background element behind the button and scale that
+   on hover so the text doesn't stretch. The wrapper defaults to the same width as
+   the map overlay (w-56 in markup). */
+.guess-wrapper {
+  width: 14rem; /* 56 -> 14rem matches w-56 */
+  overflow: visible; /* allow background to grow outside wrapper */
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1);
+}
+.guess-container {
+  position: relative;
+  height: 2.5rem; /* match button height: py-2 + font-size */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center the button text horizontally */
+  overflow: visible;
+}
+.guess-bg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  background-color: #f97316; /* orange-500 */
+  border-radius: 0.125rem; /* rounded-sm */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transform-origin: 100% 50%; /* expand leftwards from the right edge to mirror map */
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 180ms;
+  z-index: 0; /* ensure background is behind the button text */
+}
+.guess-btn {
+  position: relative; /* above the guess-bg */
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 0 1.5rem; /* px-6 */
+  height: 2.5rem; /* match container */
+  font-weight: 600;
+  z-index: 10; /* sit above the background so text remains visible */
+}
+
+/* When the map overlay is hovered, scale only the background box to visually
+   match the scaled map; the button text height and layout remain unchanged. */
+.guess-bg {
+  transform: scaleX(1);
+}
+.map-overlay:hover + .guess-wrapper .guess-bg {
+  transform: scaleX(3); /* visually grow the background box horizontally; height unchanged */
+  opacity: 1;
+  z-index: 9998; /* ensure background sits below the enlarged map overlay */
+}
+
+
