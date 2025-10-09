@@ -1,3 +1,18 @@
+GatorGuessr frontend
+
+This folder contains a Vite + React app. I added Tailwind and a simple landing page using small component files.
+
+To run locally (from Windows PowerShell):
+
+```powershell
+cd 'c:\coding shit\gatorguessr\gatorGuessr\frontend'
+npm install
+npm run dev
+```
+
+Notes:
+- Tailwind, PostCSS and autoprefixer were added as devDependencies. If you use a lockfile (package-lock.json) please run install to generate it.
+- I added simple components in `src/components` and the landing page in `src/pages/Landing.tsx`.
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
