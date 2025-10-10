@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
+	"github.com/joho/godotenv"
 )
 
 type Server struct {
@@ -32,8 +33,19 @@ type GuessResponse struct {
 	Score float32 `json:"score"`
 }
 
+func goDotEnvVariable(key string) string {
+	// load .env file
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading .env file", err)
+	}
+
+	return os.Getenv(key)
+}
+
 func main() {
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	dotenv := goDotEnvVariable("DATABASE_URL")
+	conn, err := pgx.Connect(context.Background(), dotenv)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		panic(err)
@@ -52,8 +64,8 @@ func main() {
 func (s *Server) getRandomImage(c *gin.Context) {
 	var img ImageResponse
 	err := s.db.QueryRow(context.Background(),
-		"SELECT filepath, latitude, longitude FROM images ORDER BY random() LIMIT 1").
-		Scan(&img.Filepath, img.Lat, img.Lon)
+		"SELECT filepath, latitude, longitude FROM public.images ORDER BY random() LIMIT 1").
+		Scan(&img.Filepath, &img.Lat, &img.Lon)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "could not fetch image"})
 		return
