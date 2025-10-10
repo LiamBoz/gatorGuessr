@@ -1,5 +1,5 @@
 import React from 'react';
-import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
+import Landing from './pages/Landing';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -43,4 +43,3 @@ function App() {
   
 }
 
-export default App;
