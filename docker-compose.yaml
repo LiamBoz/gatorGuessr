@@ -4,13 +4,15 @@ services:
       context: ./frontend
     ports:
       - 5173:5173
-#  backend:
-#    build:
-#      context: ./backend
-#    ports:
-#      - 8000:8000
-#    depends_on:
-#      - postgres
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8001:8001
+    environment:
+      - GIN_MODE=release
+    restart: unless-stopped
   postgres:
     container_name: postgres
     image: postgres:latest

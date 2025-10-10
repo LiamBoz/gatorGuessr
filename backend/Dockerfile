@@ -1,18 +1,20 @@
-ARG PYTHON_VERSION=3.11.4
-FROM python:${PYTHON_VERSION}-slim AS base
-
-ENV PYTHONDONTWRITEBYTECODE=1
-
-ENV PYTHONUNBUFFERED=1
+ARG GO_VERSION=1.25.1
+FROM golang:${GO_VERSION}-alpine AS build
 
 WORKDIR /app
 
-COPY requirements.txt ./
-
-RUN pip install --no-cache-dir -r requirements.txt
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 COPY . .
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -o /server .
 
-EXPOSE 8000
-
-CMD ["uvicorn", "app.main:app", "--host=0.0.0.0", "--port=8000"]
+FROM gcr.io/distroless/base-debian12
+WORKDIR /app
+COPY --from=build /server /server
+EXPOSE 8001
+USER nonroot:nonroot
+ENTRYPOINT ["/server"]
