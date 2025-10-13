@@ -15,7 +15,7 @@ type Server struct {
 	db *pgx.Conn
 }
 
-// a coords struct should be made to handle lat/lon at one object & return them as such in the json
+// ImageResponse coords struct should be made to handle lat/lon at one object & return them as such in the json
 type ImageResponse struct {
 	ID       int     `json:"id"`
 	Filepath string  `json:"filepath"`
@@ -50,8 +50,9 @@ func goDotEnvVariable(key string) string {
 }
 
 func main() {
-	dotenv := goDotEnvVariable("DATABASE_URL")
-	conn, err := pgx.Connect(context.Background(), dotenv)
+	dbURL := goDotEnvVariable("DATABASE_URL")
+	imagesDir := goDotEnvVariable("IMAGES_DIR")
+	conn, err := pgx.Connect(context.Background(), dbURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		panic(err)
@@ -63,6 +64,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/image", server.getImage)
 	router.POST("/guess", server.postGuess)
+	router.Static("/images", imagesDir)
 
 	router.Run(":8001")
 }
@@ -76,6 +78,7 @@ func (s *Server) getImage(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "could not fetch image"})
 		return
 	}
+	img.Filepath = "/images/" + img.Filepath
 	c.IndentedJSON(200, img)
 }
 
@@ -104,7 +107,7 @@ func (s *Server) postGuess(c *gin.Context) {
 	var b float64 = math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
 
 	var distance float64 = earthRadius * b
-	// score calculation, could also be split into another function
+	// score calculation, should also be split into another function
 	var maxScore int16 = 5000
 	var k float64 = math.Ln2 / 30
 	var forgivingDistance float64 = 10
