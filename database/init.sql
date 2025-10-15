@@ -20,7 +20,7 @@ CREATE TABLE guesses (
 INSERT INTO images (filepath, latitude, longitude, title)
 VALUES
   (
-    'https://example.com/images/marston.jpg',
+    'marston.jpg',
     29.648912,      
     -82.345176,    
     'Marston'

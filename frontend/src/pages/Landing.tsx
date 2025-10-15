@@ -1,10 +1,17 @@
 import React from 'react';
 import Header from '../components/Header';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { useRandomEntry } from "../hooks/useRandomEntry.ts";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY ?? '';
 
 export default function Landing() {
+
+const {data: entry, isLoading, error, refetch, isFetching } = useRandomEntry();
+
+if (isLoading) return "Loading...";
+if (error || !entry) return "Failed to load.";
+
   return (
     <div className="min-h-screen bg-[#111111] text-white">
       <Header />
@@ -13,7 +20,7 @@ export default function Landing() {
           {/* Hero image (bigger) */}
           <div className="w-full h-[560px] rounded-sm overflow-hidden">
             <img
-              src="/src/assets/guess-placeholder.jpg"
+              src={entry.filepath}
               alt="hero"
               className="w-full h-full object-cover"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -44,7 +51,7 @@ export default function Landing() {
           <div className="w-56 guess-wrapper">{/* match map width */}
             <div className="guess-container">
               <div className="guess-bg" aria-hidden="true"></div>
-              <button className="guess-btn">Guess!</button>
+              <button className="guess-btn" onClick={() => refetch()} disabled = {isFetching}>Guess!</button>
             </div>
           </div>
         </div>

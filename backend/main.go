@@ -52,6 +52,8 @@ func goDotEnvVariable(key string) string {
 func main() {
 	dbURL := goDotEnvVariable("DATABASE_URL")
 	imagesDir := goDotEnvVariable("IMAGES_DIR")
+	fmt.Println("Serving images from:", imagesDir)
+	fmt.Print(dbURL)
 	conn, err := pgx.Connect(context.Background(), dbURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
@@ -62,9 +64,9 @@ func main() {
 	server := &Server{db: conn}
 
 	router := gin.Default()
-	router.GET("/image", server.getImage)
-	router.POST("/guess", server.postGuess)
-	router.Static("/images", imagesDir)
+	router.GET("/api/image", server.getImage)
+	router.POST("/api/guess", server.postGuess)
+	router.Static("/api/images", imagesDir)
 
 	router.Run(":8001")
 }
@@ -78,7 +80,7 @@ func (s *Server) getImage(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "could not fetch image"})
 		return
 	}
-	img.Filepath = "/images/" + img.Filepath
+	img.Filepath = "/api/images/" + img.Filepath
 	c.IndentedJSON(200, img)
 }
 
