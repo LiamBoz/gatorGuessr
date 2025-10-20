@@ -4,9 +4,13 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"mime/multipart"
+	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
@@ -66,6 +70,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/api/image", server.getImage)
 	router.POST("/api/guess", server.postGuess)
+	router.POST("/api/upload", server.uploadImage)
 	router.Static("/api/images", imagesDir)
 
 	router.Run(":8001")
@@ -131,4 +136,21 @@ func (s *Server) postGuess(c *gin.Context) {
 	}
 
 	c.IndentedJSON(200, resp)
+}
+
+func (s *Server) uploadImage(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.String(400, "File upload error: %v", err)
+		return
+	}
+	fileExt := filepath.Ext(file.Filename)
+	newName := uuid.New().String() + fileExt
+
+	c.SaveUploadedFile(file, "./images/"+newName)
+
+	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+}
+
+func parseCoords(f *multipart.File) {
 }
