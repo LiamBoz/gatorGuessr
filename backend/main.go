@@ -150,7 +150,10 @@ func (s *Server) uploadImage(c *gin.Context) {
 	fileExt := filepath.Ext(file.Filename)
 	newName := uuid.New().String() + fileExt
 
-	c.SaveUploadedFile(file, "./images/"+newName)
+	if err := c.SaveUploadedFile(file, filepath.Join("/app/images", newName)); err != nil {
+		c.String(500, "save failed: %v", err)
+		return
+	}
 	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 }
 

@@ -8,6 +8,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: dev
+    command: ["air", "-c", ".air.toml"]
     ports:
       - 8001:8001
     environment:
@@ -16,7 +18,10 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend/images:/app/images:ro
+      - ./backend:/app
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+      - ./backend/images:/app/images
     restart: unless-stopped
   postgres:
     container_name: postgres
@@ -46,4 +51,6 @@ services:
 volumes:
   db_data:
   pgadmin_data:
+  go-mod-cache:
+  go-build-cache:
 
