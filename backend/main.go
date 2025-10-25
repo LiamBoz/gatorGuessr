@@ -47,7 +47,6 @@ type GuessResponse struct {
 }
 
 func goDotEnvVariable(key string) string {
-	// load .env file
 	err := godotenv.Load(".env")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading .env file", err)
@@ -154,6 +153,20 @@ func (s *Server) uploadImage(c *gin.Context) {
 		c.String(500, "save failed: %v", err)
 		return
 	}
+	lat, lon, gpsErr := ExtractGps(newName)
+
+	if gpsErr != nil {
+		c.String(500, "GPS extraction failed: %v", err)
+		return
+	}
+
+	dbErr := s.addImageToDB(newName, lat, lon)
+
+	if dbErr != nil {
+		c.String(500, "Failed to add image to db: %v", err)
+		return
+	}
+
 	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 }
 
@@ -204,4 +217,21 @@ func ExtractGps(path string) (float64, float64, error) {
 	}
 
 	return gi.Latitude.Decimal(), gi.Longitude.Decimal(), nil
+}
+
+func (s *Server) addImageToDB(filePath string, lat float64, lon float64) error {
+	img := ImageResponse{
+		Filepath: filePath,
+		Lat:      lat,
+		Lon:      lon,
+	}
+	_, err := s.db.Exec(context.Background(),
+		"INSERT INTO public.images VALUES ",
+		pgx.NamedArgs{
+			"filepath":  img.Filepath,
+			"latitude":  img.Lat,
+			"longitude": img.Lon,
+			"approved":  false,
+		})
+	return err
 }

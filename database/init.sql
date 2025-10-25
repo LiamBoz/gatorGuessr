@@ -3,6 +3,7 @@ CREATE TABLE images (
   filepath TEXT NOT NULL,
   latitude DOUBLE PRECISION NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
+  approved BOOLEAN,
   title TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
