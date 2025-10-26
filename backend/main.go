@@ -153,17 +153,17 @@ func (s *Server) uploadImage(c *gin.Context) {
 		c.String(500, "save failed: %v", err)
 		return
 	}
-	lat, lon, gpsErr := ExtractGps(newName)
+	lat, lon, gpsErr := ExtractGps(filepath.Join("/app/images", newName))
 
 	if gpsErr != nil {
-		c.String(500, "GPS extraction failed: %v", err)
+		c.String(500, "GPS extraction failed: %v", gpsErr)
 		return
 	}
 
 	dbErr := s.addImageToDB(newName, lat, lon)
 
 	if dbErr != nil {
-		c.String(500, "Failed to add image to db: %v", err)
+		c.String(500, "Failed to add image to db: %v", dbErr)
 		return
 	}
 
@@ -193,7 +193,6 @@ func ExtractGps(path string) (float64, float64, error) {
 			return 0, 0, fmt.Errorf("jpeg exif error: %v", err)
 		}
 	}
-
 	im, err := exifcommon.NewIfdMappingWithStandard()
 	if err != nil {
 		return 0, 0, err
@@ -226,7 +225,7 @@ func (s *Server) addImageToDB(filePath string, lat float64, lon float64) error {
 		Lon:      lon,
 	}
 	_, err := s.db.Exec(context.Background(),
-		"INSERT INTO public.images VALUES ",
+		"INSERT INTO public.images (filepath, latitude, longitude, approved) VALUES (@filepath, @latitude, @longitude, @approved)",
 		pgx.NamedArgs{
 			"filepath":  img.Filepath,
 			"latitude":  img.Lat,
