@@ -2,8 +2,14 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - 5173:5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
   backend:
     build:
       context: ./backend
@@ -13,8 +19,8 @@ services:
     ports:
       - 8001:8001
     environment:
-      - GIN_MODE=release
-      - IMAGES_DIR=/app/images
+      - gin_mode=release
+      - images_dir=/app/images
     env_file:
       - ./backend/.env
     volumes:
@@ -23,6 +29,8 @@ services:
       - go-build-cache:/root/.cache/go-build
       - ./backend/images:/app/images
     restart: unless-stopped
+    depends_on:
+      - postgres
   postgres:
     container_name: postgres
     image: postgres:latest

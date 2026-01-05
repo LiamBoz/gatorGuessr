@@ -84,21 +84,28 @@
   box-shadow: 0 20px 40px rgba(16,24,40,0.08);
 }
 
-/* dark landing helpers */
 .overlay-translucent { background-color: rgba(255,255,255,0.8); backdrop-filter: blur(6px); }
 
-/* Map overlay hover-grow effect: scale up anchored to bottom-right */
 .map-overlay {
-  transform-origin: 100% 100%; /* bottom-right */
-  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms, opacity 180ms;
-  will-change: transform, opacity;
-  opacity: 0.85; /* slightly translucent by default */
+  position: relative;
+  width: 22rem;   /* w-56 */
+  height: 16rem;  /* h-40 */
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  background-color: rgba(255,255,255,0.8);
+  backdrop-filter: blur(6px);
+  transition: width 200ms ease, height 200ms ease, box-shadow 200ms ease, opacity 150ms ease;
+  opacity: 0.9;
+  z-index: 10;
 }
+
 .map-overlay:hover {
-  transform: scale(3); /* ~3x size */
-  z-index: 9999; /* place above other UI */
+  width: 28rem;   /* ~2x */
+  height: 20rem;  /* ~2x */
   box-shadow: 0 30px 80px rgba(2,6,23,0.6);
-  opacity: 1; /* fully opaque on hover */
+  opacity: 1;
+  z-index: 50;
 }
 
 /* When the map overlay is hovered, expand the Guess button's width to match
@@ -111,12 +118,8 @@
   will-change: transform;
 }
 .map-overlay:hover + button {
-  transform: scaleX(3); /* widen to match map visual width without changing height */
 }
 
-/* New guess box styles: place a background element behind the button and scale that
-   on hover so the text doesn't stretch. The wrapper defaults to the same width as
-   the map overlay (w-56 in markup). */
 .guess-wrapper {
   width: 14rem; /* 56 -> 14rem matches w-56 */
   overflow: visible; /* allow background to grow outside wrapper */

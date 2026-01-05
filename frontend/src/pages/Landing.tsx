@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import { useRandomEntry } from "../hooks/useRandomEntry.ts";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY ?? '';
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? '';
 
 export default function Landing() {
 
@@ -34,13 +34,11 @@ if (error || !entry) return "Failed to load.";
             {API_KEY ? (
               <APIProvider apiKey={API_KEY}>
                 <Map
-                  style={{ width: '100%', height: '100%', opacity: 0.60 }}
-                  defaultZoom={16}
+                  defaultZoom={13}
                   defaultCenter={{ lat: 29.6465, lng: -82.3533 }}
                   disableDefaultUI={true}
-                  gestureHandling={'none'}
+                  gestureHandling={'greedy'}
                 >
-                  <Marker position={{ lat: 29.6465, lng: -82.3533 }} />
                 </Map>
               </APIProvider>
             ) : (
