@@ -1,4 +1,12 @@
 .venv
 .env
 __pycache__/
-
+**/.env
+**/.gocache/
+backend/bin/
+backend/tmp/
+backend/images/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+.DS_Store
