@@ -1,0 +1,126 @@
+openapi: 3.0.3
+info:
+  title: gatorGuessr API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8001
+paths:
+  /api/image:
+    get:
+      summary: Get a random image entry
+      responses:
+        "200":
+          description: Random image entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageResponse"
+        "500":
+          description: Server error
+  /api/guess:
+    post:
+      summary: Submit a guess for an image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuessRequest"
+      responses:
+        "200":
+          description: Guess response with score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuessResponse"
+        "500":
+          description: Server error
+  /api/upload:
+    post:
+      summary: Upload an image with EXIF GPS data
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Upload success message
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: Upload error
+        "500":
+          description: Server error
+components:
+  schemas:
+    ImageResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        filepath:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+      required:
+        - id
+        - filepath
+        - latitude
+        - longitude
+    GuessRequest:
+      type: object
+      properties:
+        img_id:
+          type: integer
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+      required:
+        - img_id
+        - latitude
+        - longitude
+    GuessResponse:
+      type: object
+      properties:
+        img_id:
+          type: integer
+        guess_latitude:
+          type: number
+          format: double
+        guess_longitude:
+          type: number
+          format: double
+        true_latitude:
+          type: number
+          format: double
+        true_longitude:
+          type: number
+          format: double
+        distance:
+          type: number
+          format: double
+        score:
+          type: integer
+      required:
+        - img_id
+        - guess_latitude
+        - guess_longitude
+        - true_latitude
+        - true_longitude
+        - distance
+        - score
