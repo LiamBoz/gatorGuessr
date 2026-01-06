@@ -1,13 +1,45 @@
 import React from 'react';
 import Header from '../components/Header';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { useMutation } from "@tanstack/react-query";
 import { useRandomEntry } from "../hooks/useRandomEntry.ts";
+import { postGuess } from "../services/entries.ts";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? '';
 
 export default function Landing() {
 
 const {data: entry, isLoading, error, refetch, isFetching } = useRandomEntry();
+const [guessPosition, setGuessPosition] = React.useState<{ lat: number; lng: number } | null>(null);
+const guessMutation = useMutation({
+  mutationFn: postGuess,
+  onSuccess: () => {
+    setGuessPosition(null);
+    refetch();
+  },
+});
+
+function handleMapClick(event: { detail?: { latLng?: { lat: number | (() => number); lng: number | (() => number) } } }) {
+  const latLng = event.detail?.latLng;
+  if (!latLng) {
+    return;
+  }
+  const lat = typeof latLng.lat === "function" ? latLng.lat() : latLng.lat;
+  const lng = typeof latLng.lng === "function" ? latLng.lng() : latLng.lng;
+  setGuessPosition({ lat, lng });
+}
+
+function handleGuessClick() {
+  if (!entry || !guessPosition || guessMutation.isPending) {
+    return;
+  }
+
+  guessMutation.mutate({
+    img_id: entry.id,
+    latitude: guessPosition.lat,
+    longitude: guessPosition.lng,
+  });
+}
 
 if (isLoading) return "Loading...";
 if (error || !entry) return "Failed to load.";
@@ -38,7 +70,11 @@ if (error || !entry) return "Failed to load.";
                   defaultCenter={{ lat: 29.6465, lng: -82.3533 }}
                   disableDefaultUI={true}
                   gestureHandling={'greedy'}
+                  onClick={handleMapClick}
                 >
+                  {guessPosition ? (
+                    <Marker position={guessPosition} />
+                  ) : null}
                 </Map>
               </APIProvider>
             ) : (
@@ -49,7 +85,13 @@ if (error || !entry) return "Failed to load.";
           <div className="w-56 guess-wrapper">{/* match map width */}
             <div className="guess-container">
               <div className="guess-bg" aria-hidden="true"></div>
-              <button className="guess-btn" onClick={() => refetch()} disabled = {isFetching}>Guess!</button>
+              <button
+                className="guess-btn"
+                onClick={handleGuessClick}
+                disabled={isFetching || guessMutation.isPending || !guessPosition}
+              >
+                Guess!
+              </button>
             </div>
           </div>
         </div>
