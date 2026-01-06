@@ -134,6 +134,7 @@ const resultCenter = guessResult
       lng: (guessResult.guess_longitude + guessResult.true_longitude) / 2,
     }
   : { lat: 29.6465, lng: -82.3533 };
+const distanceMiles = guessResult ? guessResult.distance / 1609.344 : 0;
 
   return (
     <div className="min-h-screen bg-[#111111] text-white">
@@ -157,6 +158,22 @@ const resultCenter = guessResult
             ) : (
               <div className="w-full h-full bg-gray-200/60 flex items-center justify-center text-slate-700">Map</div>
             )}
+            <div className="results-panel">
+              <div className="results-metric">
+                <div className="results-label">Score</div>
+                <div className="results-value">{guessResult.score}</div>
+              </div>
+              <div className="results-divider" aria-hidden="true"></div>
+              <div className="results-metric">
+                <div className="results-label">Distance</div>
+                <div className="results-value">{distanceMiles.toFixed(2)} mi</div>
+              </div>
+              <div className="results-divider" aria-hidden="true"></div>
+              <div className="results-metric results-message">
+                <div className="results-label">Remark</div>
+                <div className="results-value">It could have been worse.</div>
+              </div>
+            </div>
             <button className="continue-btn" onClick={handleContinue}>
               Continue <span aria-hidden="true">→</span>
             </button>
