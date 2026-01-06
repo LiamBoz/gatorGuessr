@@ -42,24 +42,29 @@ func (s *Server) postGuess(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "could not fetch image"})
 		return
 	}
-	// distance calculation, should be split into a separate function eventually
-	var dlat float64 = math.Abs(guess.Lat - img.Lat)
-	var dlon float64 = math.Abs(guess.Lon - img.Lon)
-
-	var earthRadius float64 = 6371000
-	var a float64 = math.Pow(math.Sin(dlat/2), 2) + math.Cos(guess.Lat)*math.Cos(img.Lat)*math.Pow(math.Sin(dlon/2), 2)
-	var b float64 = math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
-
-	var distance float64 = earthRadius * b
+	distance := haversineMeters(guess.Lat, guess.Lon, img.Lat, img.Lon)
 	// score calculation, should also be split into another function
-	var maxScore int16 = 5000
-	var k float64 = math.Ln2 / 30
-	var forgivingDistance float64 = 10
+	const maxScore = 5000.0
+	const forgivingDistance = 80.0
+	const mileMeters = 1609.344
+	const targetScoreAtMile = 300.0
+	kNear := math.Log(maxScore/targetScoreAtMile) / mileMeters
+	kFar := kNear * 2.5
 
-	if distance < forgivingDistance {
-		score = maxScore
+	if distance <= forgivingDistance {
+		score = int16(maxScore)
 	} else {
-		score = maxScore * int16(math.Pow(math.E, k*(distance-forgivingDistance)))
+		decayed := maxScore * math.Exp(-kNear*(distance-forgivingDistance))
+		if distance > mileMeters {
+			decayed *= math.Exp(-kFar * (distance - mileMeters))
+		}
+		if decayed < 0 {
+			decayed = 0
+		}
+		if decayed > maxScore {
+			decayed = maxScore
+		}
+		score = int16(math.Round(decayed))
 	}
 
 	resp := GuessResponse{
