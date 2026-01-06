@@ -4,6 +4,7 @@ import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
 import { useMutation } from "@tanstack/react-query";
 import { useRandomEntry } from "../hooks/useRandomEntry.ts";
 import { postGuess, GuessResponse } from "../services/entries.ts";
+import flagIconUrl from "../assets/flag.svg";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? '';
 
@@ -28,6 +29,7 @@ function MapPolyline({ path }: { path: google.maps.LatLngLiteral[] }) {
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(start.lat)) * Math.cos(toRad(end.lat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
     const distance = 2 * earthRadius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const polylinePath = path;
 
     const boundsListener = google.maps.event.addListenerOnce(map, "idle", () => {
       const zoom = map.getZoom();
@@ -47,22 +49,11 @@ function MapPolyline({ path }: { path: google.maps.LatLngLiteral[] }) {
     });
 
     const polyline = new google.maps.Polyline({
-      path,
+      path: polylinePath,
       geodesic: true,
-      strokeOpacity: 0,
-      icons: [
-        {
-          icon: {
-            path: "M 0,-1 0,1",
-            strokeOpacity: 1,
-            strokeColor: "#1f2937",
-            scale: 3,
-            strokeWeight: 2,
-          },
-          offset: "0",
-          repeat: "18px",
-        },
-      ],
+      strokeColor: "#111827",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
     });
 
     polyline.setMap(map);
@@ -119,9 +110,6 @@ function handleContinue() {
   refetch();
 }
 
-if (isLoading) return "Loading...";
-if (error || !entry) return "Failed to load.";
-
 const resultPath = guessResult
   ? [
       { lat: guessResult.guess_latitude, lng: guessResult.guess_longitude },
@@ -135,6 +123,23 @@ const resultCenter = guessResult
     }
   : { lat: 29.6465, lng: -82.3533 };
 const distanceMiles = guessResult ? guessResult.distance / 1609.344 : 0;
+const flagMarkerIcon = React.useMemo(() => {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+  const maps = (window as typeof window & { google?: typeof google }).google?.maps;
+  if (!maps) {
+    return undefined;
+  }
+  return {
+    url: flagIconUrl,
+    scaledSize: new maps.Size(36, 36),
+    anchor: new maps.Point(8, 30),
+  };
+}, [showResults]);
+
+if (isLoading) return "Loading...";
+if (error || !entry) return "Failed to load.";
 
   return (
     <div className="min-h-screen bg-[#111111] text-white">
@@ -152,7 +157,10 @@ const distanceMiles = guessResult ? guessResult.distance / 1609.344 : 0;
                   clickableIcons={false}
                 >
                   <Marker position={{ lat: guessResult.guess_latitude, lng: guessResult.guess_longitude }} />
-                  <Marker position={{ lat: guessResult.true_latitude, lng: guessResult.true_longitude }} />
+                  <Marker
+                    position={{ lat: guessResult.true_latitude, lng: guessResult.true_longitude }}
+                    icon={flagMarkerIcon}
+                  />
                   <MapPolyline path={resultPath} />
                 </Map>
               </APIProvider>
