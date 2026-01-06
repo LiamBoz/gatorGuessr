@@ -139,7 +139,7 @@ const distanceMiles = guessResult ? guessResult.distance / 1609.344 : 0;
   return (
     <div className="min-h-screen bg-[#111111] text-white">
       <Header />
-      <main className="flex items-start justify-center py-8 px-4">
+      <main className={showResults ? "flex items-start justify-center py-0 results-main" : "flex items-start justify-center py-8 px-4"}>
         {showResults && guessResult ? (
           <div className="w-full results-map">
             {API_KEY ? (
@@ -149,6 +149,7 @@ const distanceMiles = guessResult ? guessResult.distance / 1609.344 : 0;
                   defaultCenter={resultCenter}
                   disableDefaultUI={true}
                   gestureHandling={'greedy'}
+                  clickableIcons={false}
                 >
                   <Marker position={{ lat: guessResult.guess_latitude, lng: guessResult.guess_longitude }} />
                   <Marker position={{ lat: guessResult.true_latitude, lng: guessResult.true_longitude }} />
@@ -204,6 +205,7 @@ const distanceMiles = guessResult ? guessResult.distance / 1609.344 : 0;
                     disableDefaultUI={true}
                     gestureHandling={'greedy'}
                     onClick={handleMapClick}
+                    clickableIcons={false}
                   >
                     {guessPosition ? (
                       <Marker position={guessPosition} />

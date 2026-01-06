@@ -176,10 +176,14 @@
 .results-map {
   position: relative;
   width: 100%;
-  height: calc(100vh - 96px);
-  border-radius: 0.75rem;
+  height: calc(100vh - 72px);
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+}
+
+.results-main {
+  min-height: calc(100vh - 72px);
 }
 
 .continue-btn {
